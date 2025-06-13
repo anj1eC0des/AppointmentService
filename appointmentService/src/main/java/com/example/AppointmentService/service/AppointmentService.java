@@ -1,39 +1,59 @@
 package com.example.AppointmentService.service;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
 import com.example.AppointmentService.entity.Appointment;
 import com.example.AppointmentService.entity.AppointmentDTO;
+import com.example.AppointmentService.repository.AppointmentRepository;
 
 @Service
 public class AppointmentService {
-    public Appointment creatAppointment(AppointmentDTO patient) {
-        // jpa save - repo.save(patient)
-        return new Appointment();
+
+    private final AppointmentRepository appointmentRepository;
+
+    public AppointmentService(AppointmentRepository appointmentRepository) {
+        this.appointmentRepository = appointmentRepository;
+    }
+
+    public Appointment creatAppointment(AppointmentDTO appointment) {
+        Appointment appt = new Appointment();
+        appt.setPatientId(appointment.getPatientId());
+        appt.setDoctorId(appointment.getDoctorId());
+        appt.setAppointmentDateTime(appointment.getAppointmentDateTime());
+        appt.setStatus(appointment.getStatus());
+        return appointmentRepository.save(appt);
     }
 
     public List<Appointment> listAppointments() {
-        // repo.listAppointments;
-        return new ArrayList<>();
+        return appointmentRepository.findAll();
     }
 
-    public Appointment getAppointment(int id) {
-        // patient find by id
-        return new Appointment();
+    public Optional<Appointment> getAppointment(int id) {
+        return appointmentRepository.findById(id);
     }
 
-    public Appointment updateAppointment(int id, AppointmentDTO patient) {
-        return new Appointment();
+    public Appointment updateAppointment(int id, AppointmentDTO appointment) {
+        Appointment appt = new Appointment();
+        appt.setAppointmentId(id);
+        appt.setPatientId(appointment.getPatientId());
+        appt.setDoctorId(appointment.getDoctorId());
+        appt.setAppointmentDateTime(appointment.getAppointmentDateTime());
+        appt.setStatus(appointment.getStatus());
+        return appointmentRepository.save(appt);
     }
 
-    public int deleteAppointment(int id) {
-        return 0;
+    public void deleteAppointment(int id) {
+        appointmentRepository.deleteById(id);
     }
 
-    public Appointment searchAppointment(String name) {
-        return new Appointment();
+    public List<Appointment> searchAppointmentByPatientId(int patientId) {
+        return appointmentRepository.findByPatientId(patientId);
+    }
+
+    public List<Appointment> searchAppointmentByDoctorId(int doctorId) {
+        return appointmentRepository.findByDoctorId(doctorId);
     }
 }

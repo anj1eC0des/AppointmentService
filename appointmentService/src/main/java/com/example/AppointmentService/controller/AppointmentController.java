@@ -2,6 +2,7 @@ package com.example.AppointmentService.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -14,48 +15,56 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.AppointmentService.entity.Appointment;
 import com.example.AppointmentService.entity.AppointmentDTO;
+import com.example.AppointmentService.service.AppointmentService;
 
 @RestController
 public class AppointmentController {
+
+    private final AppointmentService appointmentService;
+
+    public AppointmentController(AppointmentService appointmentService) {
+        this.appointmentService = appointmentService;
+    }
+
     @PostMapping("/appointments")
     @ResponseBody
-    public String createAppointment(@RequestBody AppointmentDTO patient) {
-        return "New Appointment created";
+    public Appointment createAppointment(@RequestBody AppointmentDTO appointmentDTO) {
+        return appointmentService.creatAppointment(appointmentDTO);
     }
 
     @GetMapping("/appointments")
     @ResponseBody
     public List<Appointment> getAppointments() {
-        return new ArrayList<Appointment>();
+        return appointmentService.listAppointments();
     }
 
     @GetMapping("/appointments/{id}")
     @ResponseBody
-    public Appointment getAppointments(@PathVariable int id) {
-        return new Appointment();
+    public Optional<Appointment> getAppointments(@PathVariable int id) {
+        return appointmentService.getAppointment(id);
     }
 
     @PutMapping("/appointments/{id}")
     @ResponseBody
     public Appointment updateAppointments(@RequestBody AppointmentDTO patient, @PathVariable int id) {
-        return new Appointment();
+        return appointmentService.updateAppointment(id, patient);
     }
 
     @DeleteMapping("/appointments/{id}")
     @ResponseBody
-    public String deleteAppointment(@PathVariable int id) {
-        return "Appointment deleted";
+    public void deleteAppointment(@PathVariable int id) {
+        appointmentService.deleteAppointment(id);
     }
 
     @GetMapping("/appointments/patient/{patientId}")
     @ResponseBody
     public List<Appointment> searchAppointmentsByPatientId(@PathVariable int patientId) {
-        return new ArrayList<Appointment>();
+        return appointmentService.searchAppointmentByPatientId(patientId);
     }
 
-    @GetMapping("/appointments/patient/{patientId}")
+    @GetMapping("/appointments/doctor/{doctorId}")
     @ResponseBody
     public List<Appointment> searchAppointmentsByDoctorId(@PathVariable int doctorId) {
-        return new ArrayList<Appointment>();
+        return appointmentService.searchAppointmentByDoctorId(doctorId);
     }
 }
