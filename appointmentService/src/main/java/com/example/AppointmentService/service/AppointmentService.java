@@ -23,12 +23,19 @@ public class AppointmentService {
 
     public Appointment creatAppointment(AppointmentDTO appointment) {
         Appointment appt = new Appointment();
+        //check if patient exists
+        //check if doctor exists
+
+        //if yes
         appt.setPatientId(appointment.getPatientId());
         appt.setDoctorId(appointment.getDoctorId());
         appt.setAppointmentDateTime(appointment.getAppointmentDateTime());
         appt.setStatus(appointment.getStatus());
         Appointment savedAppointment=appointmentRepository.save(appt);
         rabbitTemplate.convertAndSend("appointment.demo",savedAppointment);
+
+        //if no
+        //throw some exception
         return savedAppointment;
 
     }
@@ -41,14 +48,17 @@ public class AppointmentService {
         return appointmentRepository.findById(id);
     }
 
-    public Appointment updateAppointment(int id, AppointmentDTO appointment) {
-        Appointment appt = new Appointment();
-        appt.setAppointmentId(id);
-        appt.setPatientId(appointment.getPatientId());
-        appt.setDoctorId(appointment.getDoctorId());
-        appt.setAppointmentDateTime(appointment.getAppointmentDateTime());
-        appt.setStatus(appointment.getStatus());
-        return appointmentRepository.save(appt);
+    public Appointment updateAppointment(int id, AppointmentDTO appointment) throws Exception{
+        Optional<Appointment> appointmentFromDb= appointmentRepository.findById(id);
+        if(appointmentFromDb.isPresent()){
+            Appointment appt=appointmentFromDb.get();
+            appt.setPatientId(appointment.getPatientId());
+            appt.setDoctorId(appointment.getDoctorId());
+            appt.setAppointmentDateTime(appointment.getAppointmentDateTime());
+            appt.setStatus(appointment.getStatus());
+            return appointmentRepository.save(appt);
+        }
+        throw new Exception("Appointment with id doesn't exist.");
     }
 
     public void deleteAppointment(int id) {

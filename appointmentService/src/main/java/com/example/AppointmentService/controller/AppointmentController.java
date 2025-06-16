@@ -46,7 +46,7 @@ public class AppointmentController {
 
     @PutMapping("/appointments/{id}")
     @ResponseBody
-    public Appointment updateAppointments(@RequestBody AppointmentDTO patient, @PathVariable int id) {
+    public Appointment updateAppointments(@RequestBody AppointmentDTO patient, @PathVariable int id) throws Exception{
         return appointmentService.updateAppointment(id, patient);
     }
 
